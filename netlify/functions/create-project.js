@@ -4,7 +4,6 @@ import {
   createBoard, createGroup, createColumn, createItem,
   updateBoardDescription, columnTypeFor,
 } from "./_lib/monday.js";
-import { createProjectFolder, saveJsonFile, driveConfigured } from "./_lib/drive.js";
 import { ALL_TEXT_FIELDS, BINDER_ITEMS } from "../../public/js/schema.js";
 
 // Description marker so we can recover the field->column mapping on edit.
@@ -20,9 +19,12 @@ export async function handler(event) {
   const result = { project: projectName };
   const warnings = [];
 
-  // 1) Google Drive folder + kickoff snapshot (best-effort)
-  if (driveConfigured()) {
+  // 1) Google Drive folder + kickoff snapshot (best-effort).
+  // Loaded lazily so a drag-and-drop deploy without `googleapis` installed
+  // still runs the Monday flow; Drive simply stays disabled until configured.
+  if (cfg.googleServiceAccountJson) {
     try {
+      const { createProjectFolder, saveJsonFile } = await import("./_lib/drive.js");
       const folder = await createProjectFolder(projectName);
       result.folder_id = folder.id;
       result.folder_url = folder.url;

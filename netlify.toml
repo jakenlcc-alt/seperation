@@ -9,6 +9,9 @@
   node_bundler = "esbuild"
   # bundle the shared schema (lives under public/js) into the functions
   included_files = ["public/js/schema.js"]
+  # googleapis is loaded lazily and only when Drive is configured; keep it
+  # out of the bundle so drag-and-drop deploys (no npm install) still work.
+  external_node_modules = ["googleapis"]
 
 # Friendly /api/* alias for the functions
 [[redirects]]
