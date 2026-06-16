@@ -1,35 +1,29 @@
 // netlify/functions/_lib/monday.js
 // Thin Monday.com client that talks to your Cloudflare Worker.
 //
-// Contract (matches the deployed monday proxy worker):
-//   POST <MONDAY_WORKER_URL>/graphql
+// Contract (matches the deployed `monday-token-keeper` worker):
+//   POST <MONDAY_WORKER_URL>            (the worker ignores the path)
 //   headers: { Content-Type: application/json }
 //   body:    { "query": "<graphql>", "variables": { ... } }
-//   -> the Worker injects the Monday token and forwards to
-//      https://api.monday.com/v2, returning Monday's raw JSON response.
-//   (The same Worker also exposes POST /file for multipart uploads.)
+//   -> the Worker injects env.MONDAY_TOKEN and forwards JSON bodies to
+//      https://api.monday.com/v2 (and multipart bodies to /v2/file),
+//      returning Monday's raw JSON response.
 //
-// MONDAY_WORKER_URL may be the base worker URL (we append /graphql) or
-// already include the /graphql path. If your Worker uses a different
-// shape, this is the ONE file to adjust.
+// If your Worker uses a different shape, this is the ONE file to adjust.
 
 import { cfg } from "./config.js";
-
-function graphqlEndpoint() {
-  const base = cfg.mondayWorkerUrl.replace(/\/+$/, "");
-  return base.endsWith("/graphql") ? base : base + "/graphql";
-}
 
 export async function mondayGraphQL(query, variables = {}) {
   if (!cfg.mondayWorkerUrl) {
     throw new Error("MONDAY_WORKER_URL is not configured yet.");
   }
+  const endpoint = cfg.mondayWorkerUrl.replace(/\/+$/, "");
   const headers = { "Content-Type": "application/json" };
   // The proxy holds the Monday token itself; an optional shared secret can
   // be sent if you later add auth to the Worker.
   if (cfg.mondayWorkerKey) headers["Authorization"] = `Bearer ${cfg.mondayWorkerKey}`;
 
-  const res = await fetch(graphqlEndpoint(), {
+  const res = await fetch(endpoint, {
     method: "POST",
     headers,
     body: JSON.stringify({ query, variables }),
