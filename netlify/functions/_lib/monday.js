@@ -51,11 +51,16 @@ export function columnTypeFor(field) {
 }
 
 export async function createBoard(name, workspaceId) {
-  const q = `
-    mutation ($name: String!, $ws: ID) {
-      create_board(board_name: $name, board_kind: public, workspace_id: $ws) { id }
-    }`;
-  const data = await mondayGraphQL(q, { name, ws: workspaceId || null });
+  // Only include workspace_id when provided — Monday rejects a null value.
+  const q = workspaceId
+    ? `mutation ($name: String!, $ws: ID!) {
+         create_board(board_name: $name, board_kind: public, workspace_id: $ws) { id }
+       }`
+    : `mutation ($name: String!) {
+         create_board(board_name: $name, board_kind: public) { id }
+       }`;
+  const vars = workspaceId ? { name, ws: workspaceId } : { name };
+  const data = await mondayGraphQL(q, vars);
   return data.create_board.id;
 }
 
