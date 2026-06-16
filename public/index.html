@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Kickoff</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">JB</span>
+      <div>
+        <h1>Project Kickoff</h1>
+        <p class="subtitle">Create &amp; manage job projects · Monday + Google Drive</p>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="new">New Project</button>
+      <button class="tab" data-tab="edit">Edit Existing</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- NEW PROJECT -->
+    <section id="tab-new" class="tab-panel active">
+      <form id="kickoff-form" autocomplete="off">
+        <div id="form-fields"><!-- groups injected by JS --></div>
+
+        <div class="actions">
+          <button type="submit" class="btn primary" id="create-btn">
+            Create Project
+          </button>
+          <span class="hint">Creates a Drive folder under <code>04_Projects</code> and a new Monday board.</span>
+        </div>
+      </form>
+    </section>
+
+    <!-- EDIT EXISTING -->
+    <section id="tab-edit" class="tab-panel">
+      <div class="loader-row">
+        <select id="project-picker">
+          <option value="">— Select an existing project —</option>
+        </select>
+        <button class="btn" id="reload-projects">Refresh</button>
+      </div>
+      <form id="edit-form" autocomplete="off" hidden>
+        <div id="edit-fields"></div>
+        <div class="actions">
+          <button type="submit" class="btn primary" id="save-btn">Save Changes</button>
+          <span class="hint" id="edit-hint"></span>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- status toast -->
+  <div id="toast" class="toast" hidden></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

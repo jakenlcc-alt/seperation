@@ -1,0 +1,17 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[functions]
+  node_bundler = "esbuild"
+  # bundle the shared schema (lives under public/js) into the functions
+  included_files = ["public/js/schema.js"]
+
+# Friendly /api/* alias for the functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

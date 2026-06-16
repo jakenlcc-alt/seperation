@@ -1,0 +1,17 @@
+{
+  "name": "project-kickoff",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Project kickoff app — creates Monday boards + Google Drive folders from a kickoff checklist.",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'static site — no build step'"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}
